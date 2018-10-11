@@ -86,7 +86,7 @@ def select_move_minimax(board, color):
 ############ ALPHA-BETA PRUNING #####################
 
 #alphabeta_min_node(board, color, alpha, beta, level, limit)
-def alphabeta_min_node(board, color, alpha, beta):
+def alphabeta_min_node(board, color, alpha, beta, level, limit):
     if color == 1: oppo_color = 2
     if color == 2: oppo_color = 1
     min_move = None
@@ -98,13 +98,13 @@ def alphabeta_min_node(board, color, alpha, beta):
         return compute_utility(next_state, color)
     moves.sort(key=_compute_util)
 
-    if moves:
+    if moves and level <= limit:
         for move in moves:
             next_state = play_move(board, oppo_color, move[0], move[1])
             if next_state in cache:
                 utility = cache[next_state]
             else:
-                utility = alphabeta_max_node(next_state, color, alpha, beta)[1]
+                utility = alphabeta_max_node(next_state, color, alpha, beta, level+1, limit)[1]
                 cache[next_state] = utility
             if utility < min_utility:
                 min_move = move
@@ -118,7 +118,7 @@ def alphabeta_min_node(board, color, alpha, beta):
 
 
 #alphabeta_max_node(board, color, alpha, beta, level, limit)
-def alphabeta_max_node(board, color, alpha, beta):
+def alphabeta_max_node(board, color, alpha, beta, level, limit):
     max_move = None
     max_utility = - float("inf")
     moves = get_possible_moves(board, color)
@@ -128,13 +128,13 @@ def alphabeta_max_node(board, color, alpha, beta):
         return compute_utility(next_state, color)
     moves.sort(key=_compute_util, reverse=True)
 
-    if moves:
+    if moves and level <= limit:
         for move in moves:
             next_state = play_move(board, color, move[0], move[1])
             if next_state in cache:
                 utility = cache[next_state]
             else:
-                utility = alphabeta_min_node(next_state, color, alpha, beta)[1]
+                utility = alphabeta_min_node(next_state, color, alpha, beta, level+1, limit)[1]
                 cache[next_state] = utility
             if utility > max_utility:
                 max_move = move
@@ -149,7 +149,7 @@ def alphabeta_max_node(board, color, alpha, beta):
 
 def select_move_alphabeta(board, color):
     cache.clear()
-    return alphabeta_max_node(board, color, -float("inf"), float("inf"))[0]
+    return alphabeta_max_node(board, color, -float("inf"), float("inf"), 0, 5)[0]
 
 
 ####################################################
