@@ -33,7 +33,19 @@ def compute_utility(board, color):
 def minimax_min_node(board, color):
     if color == 1: oppo_color = 2
     if color == 2: oppo_color = 1
-    return minimax_max_node(board, oppo_color)
+    min_move = None
+    min_utility = float("inf")
+    moves = get_possible_moves(board, oppo_color)
+    if moves:
+        for move in moves:
+            next_state = play_move(board, oppo_color, move[0], move[1])
+            utility = minimax_max_node(next_state, color)[1]
+            if utility < min_utility:
+                min_move = move
+                min_utility = utility
+        return (min_move, min_utility)
+    else:
+        return (None, compute_utility(board, color))
 
 
 def minimax_max_node(board, color):
@@ -64,16 +76,48 @@ def select_move_minimax(board, color):
 
 #alphabeta_min_node(board, color, alpha, beta, level, limit)
 def alphabeta_min_node(board, color, alpha, beta):
-    return None
+    if color == 1: oppo_color = 2
+    if color == 2: oppo_color = 1
+    min_move = None
+    min_utility = float("inf")
+    moves = get_possible_moves(board, oppo_color)
+    if moves:
+        for move in moves:
+            next_state = play_move(board, oppo_color, move[0], move[1])
+            utility = alphabeta_max_node(next_state, color, alpha, beta)[1]
+            if utility < min_utility:
+                min_move = move
+                min_utility = utility
+            if min_utility <= alpha:
+                return (min_move, min_utility)
+            beta = min(beta, min_utility)
+        return (min_move, min_utility)
+    else:
+        return (None, compute_utility(board, color))
 
 
 #alphabeta_max_node(board, color, alpha, beta, level, limit)
 def alphabeta_max_node(board, color, alpha, beta):
-    return None
+    max_move = None
+    max_utility = - float("inf")
+    moves = get_possible_moves(board, color)
+    if moves:
+        for move in moves:
+            next_state = play_move(board, color, move[0], move[1])
+            utility = alphabeta_min_node(next_state, color, alpha, beta)[1]
+            if utility > max_utility:
+                max_move = move
+                max_utility = utility
+            if max_utility >= beta:
+                return (max_move, max_utility)
+            alpha = max(alpha, max_utility)
+        return (max_move, max_utility)
+    else:
+        return (None, compute_utility(board, color))
 
 
 def select_move_alphabeta(board, color):
-    return 0,0
+    return alphabeta_max_node(board, color, -float("inf"), float("inf"))[0]
 
 
 ####################################################
@@ -108,8 +152,8 @@ def run_ai():
                                   # 2 : light disk (player 2)
 
             # Select the move and send it to the manager
-            movei, movej = select_move_minimax(board, color)
-            #movei, movej = select_move_alphabeta(board, color)
+            # movei, movej = select_move_minimax(board, color)
+            movei, movej = select_move_alphabeta(board, color)
             print("{} {}".format(movei, movej))
 
 
