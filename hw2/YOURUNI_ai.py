@@ -17,6 +17,8 @@ import time
 # You can use the functions in othello_shared to write your AI
 from othello_shared import find_lines, get_possible_moves, get_score, play_move
 
+cache = {}
+
 def compute_utility(board, color):
     """
     Return the utility of the given board state
@@ -39,7 +41,11 @@ def minimax_min_node(board, color):
     if moves:
         for move in moves:
             next_state = play_move(board, oppo_color, move[0], move[1])
-            utility = minimax_max_node(next_state, color)[1]
+            if next_state in cache:
+                utility = cache[next_state]
+            else:
+                utility = minimax_max_node(next_state, color)[1]
+                cache[next_state] = utility
             if utility < min_utility:
                 min_move = move
                 min_utility = utility
@@ -55,7 +61,11 @@ def minimax_max_node(board, color):
     if moves:
         for move in moves:
             next_state = play_move(board, color, move[0], move[1])
-            utility = minimax_min_node(next_state, color)[1]
+            if next_state in cache:
+                utility = cache[next_state]
+            else:
+                utility = minimax_min_node(next_state, color)[1]
+                cache[next_state] = utility
             if utility > max_utility:
                 max_move = move
                 max_utility = utility
@@ -70,6 +80,7 @@ def select_move_minimax(board, color):
     The return value is a tuple of integers (i,j), where
     i is the column and j is the row on the board.
     """
+    cache.clear()
     return minimax_max_node(board, color)[0]
 
 ############ ALPHA-BETA PRUNING #####################
@@ -84,7 +95,11 @@ def alphabeta_min_node(board, color, alpha, beta):
     if moves:
         for move in moves:
             next_state = play_move(board, oppo_color, move[0], move[1])
-            utility = alphabeta_max_node(next_state, color, alpha, beta)[1]
+            if next_state in cache:
+                utility = cache[next_state]
+            else:
+                utility = alphabeta_max_node(next_state, color, alpha, beta)[1]
+                cache[next_state] = utility
             if utility < min_utility:
                 min_move = move
                 min_utility = utility
@@ -104,7 +119,11 @@ def alphabeta_max_node(board, color, alpha, beta):
     if moves:
         for move in moves:
             next_state = play_move(board, color, move[0], move[1])
-            utility = alphabeta_min_node(next_state, color, alpha, beta)[1]
+            if next_state in cache:
+                utility = cache[next_state]
+            else:
+                utility = alphabeta_min_node(next_state, color, alpha, beta)[1]
+                cache[next_state] = utility
             if utility > max_utility:
                 max_move = move
                 max_utility = utility
@@ -117,6 +136,7 @@ def alphabeta_max_node(board, color, alpha, beta):
 
 
 def select_move_alphabeta(board, color):
+    cache.clear()
     return alphabeta_max_node(board, color, -float("inf"), float("inf"))[0]
 
 
