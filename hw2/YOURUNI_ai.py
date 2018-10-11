@@ -92,6 +92,12 @@ def alphabeta_min_node(board, color, alpha, beta):
     min_move = None
     min_utility = float("inf")
     moves = get_possible_moves(board, oppo_color)
+
+    def _compute_util(move):
+        next_state = play_move(board, oppo_color, move[0], move[1])
+        return compute_utility(next_state, color)
+    moves.sort(key=_compute_util)
+
     if moves:
         for move in moves:
             next_state = play_move(board, oppo_color, move[0], move[1])
@@ -116,6 +122,12 @@ def alphabeta_max_node(board, color, alpha, beta):
     max_move = None
     max_utility = - float("inf")
     moves = get_possible_moves(board, color)
+
+    def _compute_util(move):
+        next_state = play_move(board, color, move[0], move[1])
+        return compute_utility(next_state, color)
+    moves.sort(key=_compute_util, reverse=True)
+
     if moves:
         for move in moves:
             next_state = play_move(board, color, move[0], move[1])
