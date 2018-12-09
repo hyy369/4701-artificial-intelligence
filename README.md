@@ -17,3 +17,8 @@ Reviewing Python 3.
 - Caching states
 - Node ordering heuristic
 - Depth limit
+### Homework 3: Lake
+### Homework 5: Naive Bayes Classifier
+- Train
+- Predict
+- Evaluate

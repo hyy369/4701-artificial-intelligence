@@ -269,6 +269,7 @@ class FrozenLake(object):
             curr_state = self.initial_state
             while (curr_state not in self.holes) and (curr_state not in self.targets):
                 chance = random.random()
+                print(chance)
                 if chance <= epsilon:
                     action = random.choice(self.actions)
                 else:
@@ -321,7 +322,7 @@ if __name__ == "__main__":
     lake.print_map(opt_policy)
     print(lake.test_policy(opt_policy))
     
-    Qvalues = lake.Qlearner(alpha=0.5, epsilon=0.5, num_robots=10)
+    Qvalues = lake.Qlearner(alpha=0.5, epsilon=0.5, num_robots=1)
     learned_values = lake.QValue_to_value(Qvalues)
     learned_policy = lake.extract_policy(learned_values)
     lake.print_map(learned_policy)
